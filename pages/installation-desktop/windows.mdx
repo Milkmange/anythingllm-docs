@@ -112,4 +112,82 @@ If you are trying to install AnythingLLM and you are getting an error that says 
  - Click on the "Uninstall AnythingLLM.exe" file and run it. You may or may not have to run it as administrator.
  - After uninstalling, you can then reinstall for the current user only.
 
- **Performing the above steps WILL NOT remove your data or settings. You can do this safely without losing any of your data.**
+**Performing the above steps WILL NOT remove your data or settings. You can do this safely without losing any of your data.**
+
+### Failed to install/extract GPU support from CDN
+
+<Callout type="warning" emoji="️⚠️">
+  If we update to a new version of Ollama, we will update the engine version to the new version. Which again, may fail to install/extract the GPU support file leading to this error again.
+
+  You can avoid all of this by just installing AnythingLLM and Ollama separately and then connecting AnythingLLM to your local Ollama instance - which will be automatically detected and less frustrating between updates.
+  
+  We do not recommend trying to fix this issue manually as it is very prone to user error and would break when we upgrade to later versions of Ollama in AnythingLLM.
+</Callout>
+
+During installation, we pull in the vendor specific GPU support from our CDN so that you can leverage your GPU for local LLM inferencing for an optimal experience.
+
+Depending on your network connection, firewall, device settings, or other factors, you may encounter an error during installation or extraction of the GPU support where it fails to download or extract the files. Our CDN
+is globally accessible, so it is extremely unlikely that the issue is with our CDN.
+
+Before attempting to fix the issue, be sure to check your network connection, firewall, device settings, or other factors that may be blocking the download or extraction of the files. You can relaunch the installer and try again.
+If the error contines, open the `ollama_install.log` file in the `%APPDATA%\Local\Programs\AnythingLLM` folder and check for any errors but also the version of `Ollama` that is being installed.
+
+From the `ollama_install.log` file, you will see the version of `Ollama` that is being installed. Keep this version number handy for the next steps.
+
+If you encounter this error, you can try the following steps to fix it:
+
+<Callout type="info" emoji="️💡" >
+  **Example:**
+  - If the version of `Ollama` that is being installed is `0.13.0`, you should download the following files:
+    - https://cdn.anythingllm.com/support/ollama/0.13.0/bins.7z
+    - https://cdn.anythingllm.com/support/ollama/0.13.0/cudav13.7z
+    - https://cdn.anythingllm.com/support/ollama/0.13.0/cudav12.7z
+    - https://cdn.anythingllm.com/support/ollama/0.13.0/rocm_vulkan.7z
+</Callout>
+
+1. **Download the GPU support files manually**
+
+- **Required base binaries:** `https://cdn.anythingllm.com/support/ollama/<version>/bins.7z`
+
+_if you have an NVIDIA GPU, you can download the CUDA support from the following link:_
+- **Ollama Cudav13:** `https://cdn.anythingllm.com/support/ollama/<version>/cudav13.7z`
+- **Ollama CUDAv12:** `https://cdn.anythingllm.com/support/ollama/<version>/cudav12.7z`
+
+_if you have an AMD GPU, you can download the ROCm support from the following link:_
+- **Ollama ROCm:** `https://cdn.anythingllm.com/support/ollama/<version>/rocm_vulkan.7z`
+
+2. **Extract the `bins.7z` folder**
+- Open the storage location for AnythingLLM, typically `%APPDATA%\Roaming\anythingllm-desktop\storage\engines\ollama`
+- In this folder you should see `llm.exe`
+- Create and open the following folder: `%APPDATA%\Roaming\anythingllm-desktop\storage\engines\ollama\lib\ollama`
+- Unzip the `bins.7z` file into this folder.
+- You should now see several DLL files directly in this folder.
+
+3. Extract relevant GPU support files
+- If you have an NVIDIA GPU, you can extract the `cudav13` or `cudav12` folder into the `%APPDATA%\Roaming\anythingllm-desktop\storage\engines\ollama\lib\ollama` folder.
+- If you have an AMD GPU, you can extract the `rocm_vulkan.7z` file into the `%APPDATA%\Roaming\anythingllm-desktop\storage\engines\ollama\lib\ollama` folder.
+
+Your explorer should now look like this:
+```
+%APPDATA%\Roaming\anythingllm-desktop\storage\engines\ollama
+├── lib
+│   └── ollama
+│       ├── ggml-base.dll
+│       ├── ggml-cpu-**.dll (several DLL files from bins.7z)
+│       ├── cudav13/ (if you have an NVIDIA GPU)
+│       │   └── cublas64_11.dll (several DLL files from cudav13.7z)
+│       ├── cudav12/ (if you have an NVIDIA GPU)
+│       │   └── cublas64_11.dll (several DLL files from cudav12.7z)
+│       ├── rocm/ (if you have an AMD GPU)
+│       │   └── **.dll (files and folders)
+│       └── vulkan/ (if you have an AMD GPU)
+│           └── vulkan_layer.dll (several DLL files from rocm_vulkan.7z)
+└── llm.exe
+```
+
+4. Create a new dot-file in the `%APPDATA%\Roaming\anythingllm-desktop\storage\engines\ollama` folder called `.ollama-version` (no extension!) and add the following content:
+- `<version>` eg: (0.13.0, 0.12.0, etc.)
+
+5. Restart the AnythingLLM desktop app.
+- Delete all the 7z files from the `%APPDATA%\Roaming\anythingllm-desktop\storage\engines\ollama` folder as they are no longer needed.
+- You should now be able to use your GPU for local LLM inferencing.
