@@ -43,8 +43,9 @@ http://localhost:3001/api/agent-skills/outlook/auth-callback
   ```
  </Tabs.Tab>
  <Tabs.Tab>
+  For the Desktop app, select **Public client/native (mobile & desktop)** as the platform type and enter the following redirect URI:
   ```shell copy
-http://localhost:3001/api/agent-skills/outlook/auth-callback
+anythingllm://outlook-agent-skill-entra-register-callback
   ```
  </Tabs.Tab>
  </Tabs>
@@ -83,7 +84,11 @@ _You **must** add all of these permissions for the agent to work correctly._
 
 Save these changes.
 
-## Get the Client Secret
+## Get the Client Secret (Docker only)
+
+<Callout type="info" emoji="️💡">
+  **Desktop users:** You can skip this section. The Desktop app uses PKCE (Proof Key for Code Exchange) authentication which does not require a client secret.
+</Callout>
 
 1. Navigate to your application's overview page and click on the "Certificates & secrets" tab.
 2. Click on "+ New client secret" button.
